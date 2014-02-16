@@ -1,0 +1,13 @@
+{
+  "name": "CineProwl.Api",
+  "version": "0.0.0",
+  "description": "REST API server",
+  "main": "app.js",
+  "keywords": [
+    "cineprowl"
+  ],
+  "author": "Andrew Petersen",
+  "dependencies": {
+    "restify": "~2.6.1"
+  }
+}
