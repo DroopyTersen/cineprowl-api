@@ -69,12 +69,24 @@ server.get("/actors", function(req, res) {
 	transaction("actors", res);
 });
 
+server.get("/actors/:id", function(req, res) {
+	transaction("filmography", res, [req.params.id]);
+});
+
+server.get("/actors/search/:query", function(req, res) {
+	transaction("searchActors", res, [req.params.query, 2000]);
+});
+
 server.post("/movies/query", function(req, res) {
 	var query = JSON.parse(req.body);
 	transaction("query", res, [query, null, 0, 2000]);
 });
 
 server.get("/movies/search/:query", function(req, res) {
+	transaction("searchMovies", res, [req.params.query, 2000]);
+});
+
+server.get("/search/:query", function(req, res) {
 	transaction("search", res, [req.params.query, 2000]);
 });
 
