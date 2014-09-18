@@ -1,8 +1,10 @@
 var restify = require('restify'),
 	server = restify.createServer(),
-	movieService = new (require("../Services/MovieService"))();
-
+	movieService = new (require("CineProwl-Services")).MovieService(),
+	imageHelper = require("CineProwl-Models").imageHelper;
+	
 server.use(restify.queryParser());
+server.use(restify.CORS());
 server.use(restify.jsonp());
 server.use(restify.bodyParser());
 
@@ -12,6 +14,28 @@ var transaction = function(method, res, params) {
 	});
 };
 
+server.get("/config", function(req, res) {
+    var config = {
+    	images: {
+    		baseUrl: "http://d3gtl9l2a4fn1j.cloudfront.net/t/p/",
+				posterSizes: ["w92", "w154", "w185", "w342", "w500", "original"],
+				backdropSizes: ["w300", "w780", "w1280", "original"],
+				profileSizes: ["w45", "w185", "h632", "original"],
+				logoSizes: ["w45", "w92", "w154", "w185", "w300", "w500", "original"]
+    	}
+    };
+    res.send(config);
+});
+
+server.get("/stats", function(req, res) {
+    movieService.stats().then(function(stats){
+    	res.send(stats);
+    });
+});
+
+server.get("/genres", function(req, res) {
+    transaction("genres", res);
+})
 server.get("/movies", function(req, res) {
 	var query = { id : { $ne: null}};
 	var params = [
@@ -54,6 +78,9 @@ server.get("/movies/search/:query", function(req, res) {
 	transaction("search", res, [req.params.query, 2000]);
 });
 
-server.listen(4445, function() {
+var port = process.env.PORT || 4445;
+var host = process.env.IP || "localhost";
+
+server.listen(port, host, function() {
   console.log('REST API server listening on port 4445');
 });

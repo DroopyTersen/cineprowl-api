@@ -8,6 +8,8 @@
   ],
   "author": "Andrew Petersen",
   "dependencies": {
-    "restify": "~2.6.1"
+    "restify": "~2.6.1",
+    "cineprowl-services": "droopytersen/cineprowl-services",
+    "cineprowl-models": "droopytersen/cineprowl-models"
   }
 }
