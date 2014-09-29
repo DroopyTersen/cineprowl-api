@@ -8,8 +8,9 @@
   ],
   "author": "Andrew Petersen",
   "dependencies": {
-    "restify": "~2.6.1",
+    "breeze-mongodb": "0.0.6",
+    "cineprowl-models": "droopytersen/cineprowl-models",
     "cineprowl-services": "droopytersen/cineprowl-services",
-    "cineprowl-models": "droopytersen/cineprowl-models"
+    "restify": "~2.6.1"
   }
 }

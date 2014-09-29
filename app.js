@@ -1,7 +1,9 @@
 var restify = require('restify'),
 	server = restify.createServer(),
 	movieService = new (require("CineProwl-Services")).MovieService(),
-	imageHelper = require("CineProwl-Models").imageHelper;
+	breezeMongo = require("breeze-mongodb"),
+	models = require("CineProwl-Models"),
+	imageHelper = models.imageHelper
 	
 server.use(restify.queryParser());
 server.use(restify.CORS());
@@ -12,6 +14,34 @@ var transaction = function(method, res, params) {
 	movieService[method].apply(movieService, params).then(function(result) {
 		res.send(result);
 	});
+};
+
+var isNullOrEmpty = function(obj) {
+	if (obj) {
+		return Object.keys(obj).length === 0;	
+	}
+	return false;
+};
+
+var defaults = {
+	query: { id : { $ne: null}},
+	fields: models.ThinMovie.fields,
+	options: {
+		sort: {
+			addedToDb: -1
+		},
+		skip:  0,
+		limit: 50
+	}
+};
+
+var odataToMongo = function	(req) {
+	var mongoQuery =  new breezeMongo.MongoQuery(req.query);
+	return {
+		query: isNullOrEmpty(mongoQuery.filter) ? defaults.query : mongoQuery.filter,
+		fields: isNullOrEmpty(mongoQuery.select) ? defaults.fields : mongoQuery.select,
+		options: isNullOrEmpty(mongoQuery.options) ? defaults.options : mongoQuery.options
+	};
 };
 
 server.get("/config", function(req, res) {
@@ -36,15 +66,26 @@ server.get("/stats", function(req, res) {
 server.get("/genres", function(req, res) {
     transaction("genres", res);
 })
+
+/* === MOVIES === */
 server.get("/movies", function(req, res) {
-	var query = { id : { $ne: null}};
-	var params = [
-		query,
-		null,
-		0,
-		2000
-	];
-	transaction("query", res, params);
+	
+	if (isNullOrEmpty(req.query)) {
+		var params1 = [
+			defaults.query,
+			null,
+			0,
+			2000
+		];
+		transaction("query", res, params1);	
+		
+	} else {
+		var mongoQuery =  odataToMongo(req)
+		var params2 = [ mongoQuery, null];
+		//res.send(params2);
+		transaction("_find", res, params2);
+	}
+
 });
 
 server.post("/movies", function() {
