@@ -13,6 +13,8 @@ server.use(restify.bodyParser());
 var transaction = function(method, res, params) {
 	movieService[method].apply(movieService, params).then(function(result) {
 		res.send(result);
+	}).fail(function(error){
+		res.send(error);
 	});
 };
 
@@ -44,6 +46,7 @@ var odataToMongo = function	(req) {
 	};
 };
 
+
 server.get("/config", function(req, res) {
     var config = {
     	images: {
@@ -65,6 +68,19 @@ server.get("/stats", function(req, res) {
 
 server.get("/genres", function(req, res) {
     transaction("genres", res);
+});
+
+server.get("/genres/:id", function(req, res) {
+	var query = { "genres.name": req.params.id};
+	if (req.query){
+		var mongoQuery =  odataToMongo(req)
+		mongoQuery.query["genres.name"] = req.params.id;
+		mongoQuery.fields["_id"] = -1;
+		transaction("_find", res,  [ mongoQuery, null]);
+	} else {
+		transaction("query", res, [query, null, 0, 2000]);
+	}
+	
 })
 
 /* === MOVIES === */
@@ -91,16 +107,18 @@ server.get("/movies", function(req, res) {
 server.post("/movies", function() {
 
 });
-server.put("/movies", function() {
-
+server.put("/movies", function(req, res) {
+	res.send("here");
 });
 
 server.get("/movies/:id", function(req, res) {
 	transaction("getById", res, [req.params.id]);
 });
 
-server.patch("/movies/:id", function() {
-
+server.put("/movies/:id", function(req, res) {
+	var update = JSON.parse(req.body);
+	update.id = req.params.id;
+	transaction("update", res, [req.params.id], update);
 });
 server.del("/movies/:id", function(req, res) {
 	transaction("remove", res, [req.params.id]);

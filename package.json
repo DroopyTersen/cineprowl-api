@@ -9,6 +9,7 @@
   "author": "Andrew Petersen",
   "dependencies": {
     "breeze-mongodb": "0.0.6",
+    "bson": "^0.2.15",
     "cineprowl-models": "droopytersen/cineprowl-models",
     "cineprowl-services": "droopytersen/cineprowl-services",
     "restify": "~2.6.1"
