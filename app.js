@@ -150,8 +150,13 @@ server.get("/search/:query", function(req, res) {
 });
 
 var port = process.env.PORT || 4445;
-var host = process.env.IP || "localhost";
-
-server.listen(port, host, function() {
-  console.log('REST API server listening on port 4445');
-});
+var host = process.env.IP;
+if (host) {
+	server.listen(port, host, function() {
+  		console.log('REST API server listening on port ' + host + ":" + port);
+	});
+} else {
+	server.listen(port, host, function() {
+  		console.log('REST API server listening on port ' + port);
+	});
+}
