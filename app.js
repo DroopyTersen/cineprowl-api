@@ -3,7 +3,7 @@ var restify = require('restify'),
 	movieService = new (require("CineProwl-Services")).MovieService(),
 	breezeMongo = require("breeze-mongodb"),
 	models = require("CineProwl-Models"),
-	imageHelper = models.imageHelper
+	imageHelper = models.imageHelper;
 	
 server.use(restify.queryParser());
 server.use(restify.CORS());
@@ -50,7 +50,7 @@ var odataToMongo = function	(req) {
 server.get("/config", function(req, res) {
     var config = {
     	images: {
-    		baseUrl: "http://d3gtl9l2a4fn1j.cloudfront.net/t/p/",
+    		baseUrl: "http://image.tmdb.org/t/p/",
 				posterSizes: ["w92", "w154", "w185", "w342", "w500", "original"],
 				backdropSizes: ["w300", "w780", "w1280", "original"],
 				profileSizes: ["w45", "w185", "h632", "original"],
@@ -160,3 +160,6 @@ if (host) {
   		console.log('REST API server listening on port ' + port);
 	});
 }
+
+
+module.exports = server;
