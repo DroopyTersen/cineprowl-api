@@ -5,6 +5,8 @@ var restify = require('restify'),
 	models = require("CineProwl-Models"),
 	imageHelper = models.imageHelper;
 
+var droopyHttp = new(require("droopy-http"))();
+
 server.use(restify.queryParser());
 server.use(restify.CORS());
 server.use(restify.jsonp());
@@ -148,6 +150,13 @@ server.get("/movies/search/:query", function (req, res) {
 server.get("/search/:query", function (req, res) {
 	transaction("search", res, [req.params.query, 2000]);
 });
+
+server.get("/movietitles", function(req, res) {
+    droopyHttp.getJSON("http://api.cineprowl.com/movies?$select=title&$top=2000&$orderby=addedToDb desc")
+        .then(function(movies){
+            res.send(movies.map(function(m) { return m.title; }).join("<br/>"));
+        })
+})
 
 var startServer = function () {
 	var port = process.env.PORT || 4445;
