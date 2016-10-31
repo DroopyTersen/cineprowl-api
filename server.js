@@ -7,7 +7,7 @@ server.use(restify.CORS());
 server.use(restify.jsonp());
 server.use(restify.bodyParser());
 
-require("./src/rotes").configure(server);
+require("./src/routes").configure(server);
 
 var startServer = function () {
 	var port = process.env.PORT || 4445;
