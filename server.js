@@ -5,6 +5,9 @@ var restify = require('restify'),
 	models = require("CineProwl-Models"),
 	imageHelper = models.imageHelper;
 
+var droopyHttp = new(require("droopy-http"))();
+var streamer = require("./streamer");
+
 server.use(restify.queryParser());
 server.use(restify.CORS());
 server.use(restify.jsonp());
@@ -115,11 +118,27 @@ server.get("/movies/:id", function (req, res) {
 	transaction("getById", res, [req.params.id]);
 });
 
+server.get("/movies/markaswatched/:id", function(req, res) {
+    var id = req.params.id
+    if (typeof id === "string") {
+		id = parseInt(id, 10);
+	}
+    movieService.toggleWatched(id, true).then(function (result) {
+		res.send(result);
+	}).fail(function (error) {
+		res.send(error);
+	});
+});
+
 server.put("/movies/:id", function (req, res) {
-	var update = JSON.parse(req.body);
+	var update = req.body;
 	update.id = req.params.id;
+    if (typeof update.id === "string") {
+		update.id = parseInt(update.id, 10);
+	}
 	transaction("update", res, [req.params.id], update);
 });
+
 server.del("/movies/:id", function (req, res) {
 	transaction("remove", res, [req.params.id]);
 });
@@ -162,7 +181,7 @@ var startServer = function () {
 		});
 	}
 }
-
+streamer.start(server, movieService);
 module.exports = {
 	start: startServer
 };
