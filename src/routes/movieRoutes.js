@@ -4,6 +4,7 @@ var models = require("cineprowl-models");
 var respond = require("../respond");
 var transaction = respond.transaction;
 var queries = require("../queries");
+var Fuse = require("fuse.js");
 
 exports.configure = function (server) {
     /* === MOVIES === */
@@ -44,7 +45,24 @@ exports.configure = function (server) {
 
     server.del("/movies/:id", (req, res) =>transaction("remove", res, [req.params.id]))
 
-    server.get("/movies/search/:query", (req, res) => transaction("searchMovies", res, [req.params.query, 2000]));
+    server.get("/movies/search/:query", (req, res) => {
+        var odata = {
+            $top: "2000"
+        };
+        odata = Object.assign({}, odata, req.query);
+        var mongoQuery = queries.odataToMongo({ query: odata })
+        //res.send(params2);
+        movieService._find(mongoQuery, null).then(movies => {
+            var opts = {
+                shouldSort: true,
+                threshold: 0.2,
+                keys: [ "title" ]
+            };
+            var fuse = new Fuse(movies, opts);
+            return fuse.search(req.params.query)
+        })
+        .then(movies => res.send(movies))
+    });
 
     server.post("/movies/query", function (req, res) {
         var query = JSON.parse(req.body);

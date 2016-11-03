@@ -16,5 +16,6 @@ var startServer = function () {
 		console.log('REST API server listening on port ' + host + ":" + port);
 	});
 }
-
+var streamer = require("./src/streamer");
+streamer.start(server);
 startServer();

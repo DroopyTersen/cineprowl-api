@@ -14,6 +14,7 @@
     "cineprowl-models": "github:droopytersen/cineprowl-models",
     "cineprowl-services": "github:droopytersen/cineprowl-services",
     "droopy-http": "0.0.1",
+    "fuse.js": "^2.5.0",
     "restify": "~2.6.1"
   }
 }

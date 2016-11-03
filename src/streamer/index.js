@@ -1,5 +1,8 @@
 var fs = require('fs');
+
 var start = function (server, movieService) {
+    var movieService = require("../movieService");
+
     server.get("/stream/:id", function (req, res) {
         console.log("Request");
         movieService.getById(req.params.id)

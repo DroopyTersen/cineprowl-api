@@ -5,7 +5,7 @@ var isNullOrEmpty = exports.isNullOrEmpty = obj => (!obj || !Object.keys(obj).le
 
 var defaults = exports.defaults = {
     query: { id: { $ne: null } },
-    fields: models.ThinMovie.fields,
+    fields: Object.assign({}, models.ThinMovie.fields, { "file.filepath": 1 }),
     options: {
         sort: {
             addedToDb: -1
