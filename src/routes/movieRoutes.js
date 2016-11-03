@@ -1,32 +1,19 @@
-var odataToMongo = require("../odataToMongo");
+// var odataToMongo = require("../odataToMongo");
 var movieService = require("../movieService");
 var models = require("cineprowl-models");
 var respond = require("../respond");
 var transaction = respond.transaction;
-
+var queries = require("../queries");
 
 exports.configure = function (server) {
     /* === MOVIES === */
 
-    var defaults = {
-        query: { id: { $ne: null } },
-        fields: models.ThinMovie.fields,
-        options: {
-            sort: {
-                addedToDb: -1
-            },
-            skip: 0,
-            limit: 50
-        }
-    };
-
-    var isNullOrEmpty = obj => (!obj || !Object.keys(obj).length)
 
     server.get("/movies", function (req, res) {
 
-        if (isNullOrEmpty(req.query)) {
+        if (queries.isNullOrEmpty(req.query)) {
             var params1 = [
-                defaults.query,
+                queries.defaults.query,
                 null,
                 0,
                 2000
@@ -34,7 +21,7 @@ exports.configure = function (server) {
             transaction("query", res, params1);
 
         } else {
-            var mongoQuery = odataToMongo(req)
+            var mongoQuery = queries.odataToMongo(req)
             var params2 = [mongoQuery, null];
             //res.send(params2);
             transaction("_find", res, params2);

@@ -1,6 +1,8 @@
 var movieService = require("../movieService");
 var respond = require("../respond");
-transaction = respond.transaction;
+var queries = require("../queries");
+
+var transaction = respond.transaction;
 
 exports.configure = function(server) {
     require("./movieRoutes").configure(server);
@@ -19,7 +21,7 @@ exports.configure = function(server) {
     server.get("/genres/:id", function (req, res) {
         var query = { "genres.name": req.params.id };
         if (req.query) {
-            var mongoQuery = odataToMongo(req)
+            var mongoQuery = queries.odataToMongo(req)
             mongoQuery.query["genres.name"] = req.params.id;
             mongoQuery.fields["_id"] = -1;
             transaction("_find", res, [mongoQuery, null]);
