@@ -8,13 +8,13 @@
   ],
   "author": "Andrew Petersen",
   "dependencies": {
-    "Cineprowl-Models": "https://github.com/droopytersen/cineprowl-models",
+    "body-parser": "^1.17.1",
     "breeze-mongodb": "0.0.6",
     "bson": "^0.2.15",
     "cineprowl-models": "github:droopytersen/cineprowl-models",
     "cineprowl-services": "github:droopytersen/cineprowl-services",
     "droopy-http": "0.0.1",
-    "fuse.js": "^2.5.0",
-    "restify": "~2.6.1"
+    "express": "^4.15.2",
+    "fuse.js": "^2.5.0"
   }
 }
